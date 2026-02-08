@@ -1,0 +1,14 @@
+{
+  "manifestVersion": 1,
+  "appID": "cli_a90d820175f8de19",
+  "appType": "docs-addon",
+  "blockTypeID": "blk_69873e1cd4c00e1671e20609",
+  "projectName": "lark-mermaid-addon",
+  "url": "http://localhost:8080/block/index.html",
+  "contributes": {
+    "addPanel": {
+      "initialHeight": 500,
+      "view": "index.html"
+    }
+  }
+}
