@@ -1,14 +1,10 @@
-import { useState } from 'react';
-import { useTransformer, RenderedBlock } from './hooks/useTransformer';
-
-type ViewMode = 'diagram' | 'code';
+import { useTransformer } from './hooks/useTransformer';
 
 export default function App() {
   const { status, message, blocks, scan, insertAll } = useTransformer();
-  const [viewMode, setViewMode] = useState<ViewMode>('diagram');
 
   const isWorking = status === 'scanning' || status === 'rendering' || status === 'inserting';
-  const hasBlocks = blocks.length > 0;
+  const hasBlocks = blocks.filter((b) => !b.error).length > 0;
 
   return (
     <div className="panel">
@@ -30,31 +26,6 @@ export default function App() {
           </div>
         )}
 
-        {hasBlocks && (
-          <>
-            <div className="toggle-bar">
-              <button
-                className={`toggle-btn ${viewMode === 'diagram' ? 'active' : ''}`}
-                onClick={() => setViewMode('diagram')}
-              >
-                Diagram
-              </button>
-              <button
-                className={`toggle-btn ${viewMode === 'code' ? 'active' : ''}`}
-                onClick={() => setViewMode('code')}
-              >
-                Code
-              </button>
-            </div>
-
-            <div className="block-list">
-              {blocks.map((block, i) => (
-                <BlockCard key={i} block={block} viewMode={viewMode} index={i} />
-              ))}
-            </div>
-          </>
-        )}
-
         <div className="actions">
           <button className="action-btn scan-btn" onClick={scan} disabled={isWorking}>
             {isWorking && status !== 'inserting' ? 'Scanning...' : 'Rescan'}
@@ -66,28 +37,6 @@ export default function App() {
           )}
         </div>
       </div>
-    </div>
-  );
-}
-
-function BlockCard({ block, viewMode, index }: { block: RenderedBlock; viewMode: ViewMode; index: number }) {
-  if (block.error) {
-    return (
-      <div className="block-card error-card">
-        <div className="card-label">Block {index + 1} - Render Error</div>
-        <div className="error-item">{block.error}</div>
-      </div>
-    );
-  }
-
-  return (
-    <div className="block-card">
-      <div className="card-label">Block {index + 1}</div>
-      {viewMode === 'diagram' ? (
-        <div className="diagram-view" dangerouslySetInnerHTML={{ __html: block.svg }} />
-      ) : (
-        <pre className="code-view">{block.code}</pre>
-      )}
     </div>
   );
 }
