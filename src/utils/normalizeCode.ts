@@ -23,8 +23,13 @@ export function normalizeCode(code: string): string {
   normalized = normalized.replace(/\u201C/g, '#quot;').replace(/\u201D/g, '#quot;');
   normalized = normalized.replace(/\u2018/g, '#apos;');
 
-  // Escape regular double-quotes inside bracket content [...]
+  // Escape double-quotes inside bracket content [...], but preserve
+  // mermaid's ["..."] syntax where quotes wrap the entire label.
   normalized = normalized.replace(/\[([^\]]*)\]/g, (_match, content: string) => {
+    // If content is wrapped in quotes like ["label"], preserve them
+    if (/^".*"$/.test(content)) {
+      return '[' + content + ']';
+    }
     const escaped = content.replace(/"/g, '#quot;');
     return '[' + escaped + ']';
   });

@@ -8,6 +8,8 @@ import {
 import { isMermaidCode } from '../utils/mermaidDetector';
 import { normalizeCode } from '../utils/normalizeCode';
 import { svgToDataUrl } from '../utils/svgToImage';
+import mermaid from 'mermaid';
+import { mermaidConfig } from '../utils/mermaidConfig';
 
 interface MermaidCodeBlock {
   snapshot: BlockSnapshot;
@@ -37,22 +39,15 @@ export interface UseTransformerReturn {
   insertAll: () => Promise<void>;
 }
 
-let mermaidInstance: typeof import('mermaid')['default'] | null = null;
-let mermaidInitPromise: Promise<void> | null = null;
+let mermaidReady = false;
 let renderCounter = 0;
 
-async function ensureMermaid() {
-  if (mermaidInstance) return mermaidInstance;
-  if (!mermaidInitPromise) {
-    mermaidInitPromise = (async () => {
-      const { default: mermaid } = await import('mermaid');
-      const { mermaidConfig } = await import('../utils/mermaidConfig');
-      mermaid.initialize(mermaidConfig);
-      mermaidInstance = mermaid;
-    })();
+function ensureMermaid() {
+  if (!mermaidReady) {
+    mermaid.initialize(mermaidConfig);
+    mermaidReady = true;
   }
-  await mermaidInitPromise;
-  return mermaidInstance!;
+  return mermaid;
 }
 
 function collectMermaidBlocks(
@@ -111,7 +106,7 @@ export function useTransformer(): UseTransformerReturn {
       setStatus('rendering');
       setMessage(`Rendering ${mermaidBlocks.length} block(s)...`);
 
-      const mermaid = await ensureMermaid();
+      const mermaid = ensureMermaid();
       const rendered: RenderedBlock[] = [];
 
       for (const block of mermaidBlocks) {

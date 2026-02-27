@@ -24,6 +24,11 @@ const config = {
     publicPath: isDevelopment ? '/block/' : './',
   },
   module: {
+    parser: {
+      javascript: {
+        dynamicImportMode: 'eager',
+      },
+    },
     rules: [
       {
         test: /\.js$/,
@@ -83,17 +88,8 @@ const config = {
     minimize: isProduction,
     minimizer: [new ESBuildMinifyPlugin({ target: 'es2015', css: true })],
     moduleIds: 'deterministic',
-    runtimeChunk: true,
-    splitChunks: {
-      chunks: 'all',
-      cacheGroups: {
-        vendor: {
-          name: 'vendor',
-          test: /[\\/]node_modules[\\/]/,
-          chunks: 'all',
-        },
-      },
-    },
+    runtimeChunk: false,
+    splitChunks: false,
   },
   devServer: isProduction
     ? undefined

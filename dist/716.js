@@ -1,1 +1,0 @@
-"use strict";(self.webpackChunklark_mermaid_addon=self.webpackChunklark_mermaid_addon||[]).push([[716],{9716(s,e,a){a.r(e),a.d(e,{mermaidConfig:()=>d});const d={startOnLoad:!1,theme:"default",securityLevel:"loose",flowchart:{useMaxWidth:!0,htmlLabels:!0},sequence:{useMaxWidth:!0}}}}]);
